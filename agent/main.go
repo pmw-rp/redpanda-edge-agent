@@ -90,6 +90,16 @@ func initClient(rp *Redpanda, mutex *sync.Once, prefix Prefix) {
 		if config.Exists(maxVersionPath) {
 			opts = MaxVersionOpt(config.String(maxVersionPath), opts)
 		}
+		fetchMaxBytesPath := fmt.Sprintf("%s.fetch_max_bytes", prefix)
+		if config.Exists(fetchMaxBytesPath) {
+			fetchMaxBytes := config.Int64(fetchMaxBytesPath)
+			opts = append(opts, kgo.FetchMaxBytes(int32(fetchMaxBytes)))
+		}
+		producerBatchMaxBytesPath := fmt.Sprintf("%s.producer_batch_max_bytes", prefix)
+		if config.Exists(producerBatchMaxBytesPath) {
+			producerBatchMaxBytes := config.Int64(producerBatchMaxBytesPath)
+			opts = append(opts, kgo.ProducerBatchMaxBytes(int32(producerBatchMaxBytes)))
+		}
 		tlsPath := fmt.Sprintf("%s.tls", prefix)
 		if config.Exists(tlsPath) {
 			tlsConfig := TLSConfig{}
